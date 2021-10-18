@@ -1,6 +1,7 @@
 #!/bin/bash
+set -eu -o pipefail
 
-BASE=${BASE:-drud/mysql:8.0.26}
+BASE=${BASE:-drud/mysql:$(cat base_version.txt)}
 MAJOR=${BASE%.*}
 
 # Build only current architecture and load into docker
