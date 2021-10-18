@@ -8,7 +8,7 @@ set -x
 # https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/1928075
 sudo add-apt-repository ppa:jacob/virtualisation
 
-sudo apt-get -qq update && sudo apt-get -qq install -y docker-ce-cli binfmt-support  qemu qemu-user qemu-user-static
+sudo apt-get -qq update && sudo apt-get -qq install -y docker-ce-cli binfmt-support  qemu qemu-user qemu-user-static >/dev/null
 
 
 # Get recent buildx
@@ -20,4 +20,4 @@ if ! docker buildx inspect ddev-builder-multi --bootstrap >/dev/null; then docke
 docker buildx inspect --bootstrap
 
 # Install github's gh tool
-wget -O /tmp/gh.deb https://github.com/cli/cli/releases/download/v2.1.0/gh_2.1.0_linux_arm64.deb && sudo dpkg -i /tmp/gh.deb
+wget -O /tmp/gh.deb https://github.com/cli/cli/releases/download/v2.1.0/gh_2.1.0_linux_arm64.deb && sudo dpkg -i /tmp/gh.deb >/dev/null

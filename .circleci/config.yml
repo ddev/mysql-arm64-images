@@ -33,7 +33,7 @@ jobs:
             - xtrabackup-v1
       - run: ./.circleci/linux_circle_vm_setup.sh
       #    - run: cd xtrabackup-8.0 >/dev/null && ./build.sh && popd >/dev/null
-      - run: mkdir -p xtrabackup-8.0/install && cd xtrabackup-8.0/installs && wget https://github.com/drud/mysql-arm64-images/releases/download/v0.0.2/xtrabackup-8.0.26-18-arm64.tar.gz
+      - run: mkdir -p xtrabackup-8.0/install && cd xtrabackup-8.0/install && wget https://github.com/drud/mysql-arm64-images/releases/download/v0.0.2/xtrabackup-8.0.26-18-arm64.tar.gz
       - run: ls -lR xtrabackup-8.0/install
       #    - save_cache:
       #        key: xtrabackup-v1
