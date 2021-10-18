@@ -17,7 +17,6 @@ workflows:
           branches:
             ignore: /.*/
 
-
 jobs:
   release:
     environment:
@@ -34,10 +33,21 @@ jobs:
         - xtrabackup-v1
     - run: ./.circleci/linux_circle_vm_setup.sh
     - run: cd xtrabackup-8.0 >/dev/null && ./build.sh && popd >/dev/null
-    - run: echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
-    - run: ./push.sh
-    - run: docker logout
     - save_cache:
         key: xtrabackup-v1
         paths:
           - xtrabackup-8.0/percona-xtrabackup
+    - run:
+        name: Upload artifacts to GitHub release page
+        command: |
+          if [ ! -z "${GITHUB_TOKEN}" ]; then
+            echo "GITHUB_TOKEN provided, pushing release ${CIRCLE_TAG}"
+            echo ${GITHUB_TOKEN} | gh auth login --with-token
+            gh release upload --clobber ${CIRCLE_TAG} xtrabackup-8.0/install/xtrabackup-*tar.gz*
+            echo | gh auth logout --hostname=github.com
+         else
+           echo "GITHUB_TOKEN not provided, not pushing release $CIRCLE_TAG"
+         fi
+    - run: echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+    - run: ./push.sh
+    - run: docker logout

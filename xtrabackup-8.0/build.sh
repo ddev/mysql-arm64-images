@@ -20,10 +20,10 @@ mkdir -p ${BOOSTDIR}
 cmake .. -DWITH_NUMA=1 -DDOWNLOAD_BOOST=1 -DWITH_BOOST=${BOOSTDIR} -DWITH_NUMA=1 -DCMAKE_INSTALL_PREFIX=${INSTALLDIR}
 
 make -j ${CONCURRENCY}
+rm -rf ${INSTALLDIR:-/nowhere}/*
 make install
-popd >/dev/null
 popd >/dev/null
 
 pushd ${INSTALLDIR} >/dev/null
 tar -czf xtrabackup-${VERSION}-arm64.tar.gz lib bin
-popd >/dev/null
+shasum -a 256 xtrabackup-${VERSION}-arm64.tar.gz >xtrabackup-${VERSION}-arm64.tar.gz.sha256.txt
