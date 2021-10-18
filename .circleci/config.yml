@@ -2,20 +2,20 @@ version: 2
 
 workflows:
   version: 2
-#  normal_build_and_test:
-#    jobs:
-#    - build_and_test
+  #  normal_build_and_test:
+  #    jobs:
+  #    - build_and_test
 
   release:
     jobs:
-    - release:
-        context: mysql-arm64-images
-        filters:
-          tags:
-            only:
-            - "/.*/"
-          branches:
-            ignore: /.*/
+      - release:
+          context: mysql-arm64-images
+          filters:
+            tags:
+              only:
+                - "/.*/"
+            branches:
+              ignore: /.*/
 
 jobs:
   release:
@@ -27,29 +27,29 @@ jobs:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
     steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - xtrabackup-v1
-    - run: ./.circleci/linux_circle_vm_setup.sh
-#    - run: cd xtrabackup-8.0 >/dev/null && ./build.sh && popd >/dev/null
-    - run: mkdir -p xtrabackup-8.0/installs && cd xtrabackup-8.0/installs && wget https://github.com/drud/mysql-arm64-images/releases/download/v0.0.2/xtrabackup-8.0.26-18-arm64.tar.gz
+      - checkout
+      - restore_cache:
+          keys:
+            - xtrabackup-v1
+      - run: ./.circleci/linux_circle_vm_setup.sh
+      #    - run: cd xtrabackup-8.0 >/dev/null && ./build.sh && popd >/dev/null
+      - run: mkdir -p xtrabackup-8.0/installs && cd xtrabackup-8.0/installs && wget https://github.com/drud/mysql-arm64-images/releases/download/v0.0.2/xtrabackup-8.0.26-18-arm64.tar.gz
 
-#    - save_cache:
-#        key: xtrabackup-v1
-#        paths:
-#          - xtrabackup-8.0/percona-xtrabackup
-    - run:
-        name: Upload artifacts to GitHub release page
-        command: |
-          if [ ! -z "${GITHUB_TOKEN}" ]; then
-            echo "GITHUB_TOKEN provided, pushing release ${CIRCLE_TAG}"
-            echo ${GITHUB_TOKEN} | gh auth login --with-token
-            gh release upload --clobber ${CIRCLE_TAG} xtrabackup-8.0/install/xtrabackup-*tar.gz*
-            echo | gh auth logout --hostname=github.com
-         else
-           echo "GITHUB_TOKEN not provided, not pushing release $CIRCLE_TAG"
-         fi
-    - run: echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
-    - run: ./push.sh
-    - run: docker logout
+      #    - save_cache:
+      #        key: xtrabackup-v1
+      #        paths:
+      #          - xtrabackup-8.0/percona-xtrabackup
+      - run:
+          name: Upload artifacts to GitHub release page
+          command: |
+            if [ ! -z "${GITHUB_TOKEN}" ]; then
+              echo "GITHUB_TOKEN provided, pushing release ${CIRCLE_TAG}"
+              echo ${GITHUB_TOKEN} | gh auth login --with-token
+              gh release upload --clobber ${CIRCLE_TAG} xtrabackup-8.0/install/xtrabackup-*tar.gz*
+              echo | gh auth logout --hostname=github.com
+            else
+             echo "GITHUB_TOKEN not provided, not pushing release $CIRCLE_TAG"
+            fi
+      - run: echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+      - run: ./push.sh
+      - run: docker logout
