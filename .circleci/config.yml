@@ -42,13 +42,13 @@ jobs:
       - run:
           name: Upload artifacts to GitHub release page
           command: |
-            if [ ! -z "${GH_TOKEN}" ]; then
-              echo "GH_TOKEN provided, pushing release ${CIRCLE_TAG}"
-              echo ${GH_TOKEN} | gh auth login --with-token
+            if [ ! -z "${GTOKEN}" ]; then
+              echo "GTOKEN provided, pushing release ${CIRCLE_TAG}"
+              echo ${GTOKEN} | gh auth login --with-token
               gh release upload --clobber ${CIRCLE_TAG} xtrabackup-8.0/install/xtrabackup-*tar.gz*
               echo | gh auth logout --hostname=github.com
             else
-             echo "GH_TOKEN not provided, not pushing release $CIRCLE_TAG"
+             echo "GTOKEN not provided, not pushing release $CIRCLE_TAG"
             fi
       - run: echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
       - run: ./push.sh
