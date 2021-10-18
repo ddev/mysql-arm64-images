@@ -20,4 +20,4 @@ if ! docker buildx inspect ddev-builder-multi --bootstrap >/dev/null; then docke
 docker buildx inspect --bootstrap
 
 # Install github's gh tool
-wget -O /tmp/gh.deb https://github.com/cli/cli/releases/download/v2.1.0/gh_2.1.0_linux_arm64.deb && dpkg -i /tmp/gh.deb
+wget -O /tmp/gh.deb https://github.com/cli/cli/releases/download/v2.1.0/gh_2.1.0_linux_arm64.deb && sudo dpkg -i /tmp/gh.deb
