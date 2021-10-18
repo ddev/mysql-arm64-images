@@ -1,0 +1,55 @@
+version: 2
+
+workflows:
+  version: 2
+#  normal_build_and_test:
+#    jobs:
+#    - build_and_test
+
+  release:
+    jobs:
+    - release:
+        context: mysql-arm64-images
+        filters:
+          tags:
+            only:
+            - "/.*/"
+          branches:
+            ignore: /.*/
+
+
+jobs:
+#  build_and_test:
+#    environment:
+#      CI: "true"
+#    machine:
+#      image: ubuntu-2004:202107-02
+#
+#    steps:
+#      - checkout
+#      - run:
+#          name: "docker login if DOCKERHUB_TOKEN provided"
+#          command: if [ ! -z "${DOCKERHUB_TOKEN}" ]; then echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin; fi
+#      - run: ./.circleci/linux_circle_vm_setup.sh
+#      - run: make test
+
+  release:
+    environment:
+      CI: "true"
+      BUILDKIT_PROGRESS: plain
+    # Builds on arm64
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+    steps:
+    - checkout
+    - restore_cache: xtrabackup-v1
+    - run: ./.circleci/linux_circle_vm_setup.sh
+    - run: cd xtrabackup-8.0 >/dev/null && ./build.sh && popd >/dev/null
+    - run: echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+    - run: ./push.sh
+    - run: docker logout
+    - save_cache:
+        key: xtrabackup-v1
+        paths:
+          - xtrabackup-8.0/percona-xtrabackup

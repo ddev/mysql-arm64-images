@@ -4,5 +4,6 @@ set -eu -o pipefail
 MINORVERSION=${BASE:-drud/mysql:$(cat base_version.txt)}
 MAJORVERSION=${MINORVERSION%.*}
 
+set -x
 # Build only current architecture and load into docker
-docker buildx build -t ${MINORVERSION} -t ${MAJORVERSION}  --push --platform=linux/arm64,linux/amd64 .
+docker buildx build --target=mysql -t ${MINORVERSION} -t ${MAJORVERSION}  --push --platform=linux/arm64,linux/amd64 .

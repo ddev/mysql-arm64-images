@@ -7,4 +7,4 @@ MAJORVERSION=${MINORVERSION%.*}
 
 set -x
 # Build only current architecture and load into docker
-docker buildx build -t ${MINORVERSION} -t ${MAJORVERSION} --load .
+docker buildx build --target=mysql -t ${MINORVERSION} -t ${MAJORVERSION} --load .
