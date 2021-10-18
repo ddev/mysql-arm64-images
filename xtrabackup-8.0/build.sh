@@ -4,10 +4,26 @@
 
 set -eu -o pipefail
 VERSION=$(cat base_version.txt)
+BOOSTDIR=/tmp/boost
+INSTALLDIR=${PWD}/install
+CONCURRENCY=4
 
-apt-get -y install dirmngr cmake lsb-release wget  build-essential flex bison automake autoconf libtool cmake libaio-dev mysql-client libncurses-dev zlib1g-dev libev-dev libcurl4-gnutls-dev vim-common devscripts  libnuma-dev openssl libssl-dev libgcrypt20-dev
+sudo apt-get update && sudo apt-get -y install dirmngr cmake lsb-release wget  build-essential flex bison automake autoconf libtool cmake libaio-dev mysql-client libncurses-dev zlib1g-dev libev-dev libcurl4-gnutls-dev vim-common devscripts  libnuma-dev openssl libssl-dev libgcrypt20-dev
 
 if [ ! -d percona-xtrabackup/.git ]; then
   rm -rf percona-xtrabackup && git clone https://github.com/percona/percona-xtrabackup.git
 fi
-cd percona-xtrabackup && git fetch origin && git checkout percona-xtrabackup-${VERSION}
+pushd percona-xtrabackup  >/dev/null
+git fetch origin && git reset --hard && git clean -fd && git checkout percona-xtrabackup-${VERSION}
+mkdir -p build install && pushd build >/dev/null
+mkdir -p ${BOOSTDIR}
+cmake .. -DWITH_NUMA=1 -DDOWNLOAD_BOOST=1 -DWITH_BOOST=${BOOSTDIR} -DWITH_NUMA=1 -DCMAKE_INSTALL_PREFIX=${INSTALLDIR}
+
+make -j ${CONCURRENCY}
+make install
+popd >/dev/null
+popd >/dev/null
+
+pushd ${INSTALLDIR} >/dev/null
+tar -czf xtrabackup-${VERSION}-arm64.tar.gz lib bin
+popd >/dev/null
