@@ -11,7 +11,7 @@ SHELL ["/bin/bash", "-c"]
 
 # xtrabackup-8.0 should always be installed, then ddev-dbserver won't have to install it.
 # If on amd64 we'll get it from percona package
-RUN if [ "$(arch)" = "amd64" ]; then \
+RUN if [ "$(arch)" = "x86_64" ]; then \
   rm -f /usr/local/bin/xb* /usr/local/bin/xtrabackup* /usr/local/lib/libmysqlservices.a ; \
   curl -sSL https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb -o percona-release_latest.$(lsb_release -sc)_all.deb && \
   dpkg -i percona-release_latest.$(lsb_release -sc)_all.deb >/dev/null && \
