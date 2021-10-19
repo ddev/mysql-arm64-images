@@ -6,11 +6,10 @@ SHELL ["/bin/bash", "-c"]
 
 # Pin the versions of mysql-server and percona-xtrabackup80 to the versions
 # in /files (which must be updated)
-COPY /files/mysql-server-8.0 /etc/apt/preferences.d/mysql-server-8.0
-COPY /files/percona-xtrabackup80 /etc/apt/preferences.d/percona-xtrabackup80
+COPY /files/mysql-server /etc/apt/preferences.d
+COPY /files/percona-xtrabackup80 /etc/apt/preferences.d
 
-RUN apt-get -qq update >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev lsb-release wget >/dev/null
-RUN apt-get install -y mysql-server-8.0
+RUN apt-get -qq update >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev lsb-release mysql-server wget >/dev/null
 
 # If xtrabackup has been built into this repo, copy it in
 # But that will be arm64, so we'll delete it if we're on amd64
