@@ -4,8 +4,6 @@ ARG MYSQL_PACKAGE_VERSION
 
 SHELL ["/bin/bash", "-c"]
 
-RUN echo "MYSQL_PACKAGE_VERSION=${MYSQL_PACKAGE_VERSION}" >/tmp/pv.out
-
 RUN apt-get -qq update >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev lsb-release wget >/dev/null
 RUN apt-get install -y mysql-server-8.0=${MYSQL_PACKAGE_VERSION}
 
