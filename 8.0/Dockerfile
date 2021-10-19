@@ -9,7 +9,7 @@ SHELL ["/bin/bash", "-c"]
 COPY /files/mysql-server /etc/apt/preferences.d
 COPY /files/percona-xtrabackup80 /etc/apt/preferences.d
 
-RUN apt-get -qq update >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev lsb-release mysql-server wget >/dev/null
+RUN apt-get -qq update >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev libev-dev libdbd-mysql-perl lsb-release mysql-server rsync wget >/dev/null
 
 # If xtrabackup has been built into this repo, copy it in
 # But that will be arm64, so we'll delete it if we're on amd64
