@@ -23,7 +23,7 @@ SHELL ["/bin/bash", "-c"]
 RUN if [ "$(arch)" = "x86_64" ]; then \
   set -eu -o pipefail; \
   rm -f /usr/local/bin/xb* /usr/local/bin/xtrabackup* /usr/local/lib/libmysqlservices.a ; \
-  curl --fail -o /tmp/xtrabackup.deb https://downloads.percona.com/downloads/Percona-XtraBackup-LATEST/Percona-XtraBackup-${XTRABACKUP_PACKAGE_VERSION%.*}/binary/debian/focal/x86_64/percona-xtrabackup-80_${XTRABACKUP_PACKAGE_VERSION}.focal_amd64.deb  && \
+  curl --fail -o /tmp/xtrabackup.deb https://downloads.percona.com/downloads/Percona-XtraBackup-LATEST/Percona-XtraBackup-${XTRABACKUP_PACKAGE_VERSION%-*}/binary/debian/focal/x86_64/percona-xtrabackup-80_${XTRABACKUP_PACKAGE_VERSION}.focal_amd64.deb  && \
   dpkg -i /tmp/xtrabackup.deb >/dev/null && \
   rm /tmp/xtrabackup.deb ; \
   fi
