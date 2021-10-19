@@ -1,6 +1,13 @@
 FROM ubuntu:20.04 as base
+ARG XTRABACKUP_PACKAGE_VERSION
+ARG MYSQL_PACKAGE_VERSION
 
-RUN apt-get -qq update >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl lsb-release mysql-server-8.0 wget >/dev/null
+SHELL ["/bin/bash", "-c"]
+
+RUN echo "MYSQL_PACKAGE_VERSION=${MYSQL_PACKAGE_VERSION}" >/tmp/pv.out
+
+RUN apt-get -qq update >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev lsb-release wget >/dev/null
+RUN apt-get install -y mysql-server-8.0=${MYSQL_PACKAGE_VERSION}
 
 # If xtrabackup has been built into this repo, copy it in
 # But that will be arm64, so we'll delete it if we're on amd64
@@ -13,10 +20,9 @@ SHELL ["/bin/bash", "-c"]
 # If on amd64 we'll get it from percona package
 RUN if [ "$(arch)" = "x86_64" ]; then \
   rm -f /usr/local/bin/xb* /usr/local/bin/xtrabackup* /usr/local/lib/libmysqlservices.a ; \
-  curl -sSL https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb -o percona-release_latest.$(lsb_release -sc)_all.deb && \
-  dpkg -i percona-release_latest.$(lsb_release -sc)_all.deb >/dev/null && \
-  rm percona-release*.deb && \
-  apt-get -qq update && apt-get -qq install -y percona-xtrabackup-8.0 >/dev/null; \
+  curl -o /tmp/xtrabackup.deb -sSL https://downloads.percona.com/downloads/Percona-XtraBackup-LATEST/Percona-XtraBackup-${XTRABACKUP_PACKAGE_VERSION%-*}/binary/debian/focal/x86_64/percona-xtrabackup-80_${XTRABACKUP_PACKAGE_VERSION}.focal_amd64.deb  && \
+  dpkg -i /tmp/xtrabackup.deb >/dev/null && \
+  rm /tmp/xtrabackup.deb ; \
   fi
 
 # But if we still don't have it
