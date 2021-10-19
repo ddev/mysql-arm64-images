@@ -9,4 +9,4 @@ XTRABACKUP_VERSION=$(cat xtrabackup_version.txt)
 
 set -x
 # Build only current architecture and load into docker
-docker buildx build --build-arg=XTRABACKUP_VERSION="${XTRABACKUP_VERSION}" --build-arg="MYSQL_PACKAGE_VERSION=${MYSQL_PACKAGE_VERSION}" --target=mysql -t ${REPO_NAME}:${MYSQL_MAJOR} -t ${REPO_NAME}:${MYSQL_MINOR} --load .
+docker buildx build --build-arg=XTRABACKUP_VERSION="${XTRABACKUP_VERSION}" --build-arg="MYSQL_PACKAGE_VERSION=${MYSQL_PACKAGE_VERSION}" --target=mysql -t ${REPO_NAME}:${MYSQL_MAJOR} -t ${REPO_NAME}:${MYSQL_MINOR} .
