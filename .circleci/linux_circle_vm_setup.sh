@@ -6,7 +6,7 @@ set -x
 # Get recent qemu to avoid constant qemu crashes on Ubuntu 20.04
 # Incomprehensible discussions of the problem at
 # https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/1928075
-sudo add-apt-repository ppa:jacob/virtualisation
+# sudo add-apt-repository ppa:jacob/virtualisation
 
 sudo apt-get -qq update && sudo apt-get -qq install -y docker-ce-cli binfmt-support  qemu qemu-user qemu-user-static >/dev/null
 
