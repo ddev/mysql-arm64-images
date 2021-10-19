@@ -24,8 +24,9 @@ jobs:
       BUILDKIT_PROGRESS: plain
     # Builds on arm64
     machine:
-      image: ubuntu-2004:202101-01
-    resource_class: arm.medium
+      image: ubuntu-2004:202107-02
+#      image: ubuntu-2004:202101-01
+#    resource_class: arm.medium
     steps:
       - checkout
       - restore_cache:
