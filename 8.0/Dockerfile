@@ -1,7 +1,6 @@
 FROM ubuntu:20.04 as base
 ARG XTRABACKUP_PACKAGE_VERSION
 ARG MYSQL_PACKAGE_VERSION
-
 SHELL ["/bin/bash", "-c"]
 
 # Pin the versions of mysql-server and percona-xtrabackup80 to the versions
@@ -28,11 +27,15 @@ RUN if [ "$(arch)" = "x86_64" ]; then \
   rm /tmp/xtrabackup.deb ; \
   fi
 
-# But if we still don't have it
+# But if we still don't have it (arm64)
 RUN if ! command -v xtrabackup; then \
-  wget -O /tmp/xtrabackup_arm64.tar.gz "https://github.com/drud/xtradb-arm64/releases/download/v0.0/xtrabackup8.0.26-ubuntu20.04-arm64.tar.gz"; \
-  tar -C /usr/local -xzf /tmp/xtrabackup_arm64.tar.gz ; \
-  rm -f /tmp/xtrabackup_arm64.tar.gz ; \
+  URL="https://github.com/drud/xtrabackup-build/releases/download/${XTRABACKUP_PACKAGE_VERSION%-*}/xtrabackup-${XTRABACKUP_PACKAGE_VERSION%-*}-arm64.tar.gz" && \
+  cd /tmp && \
+  wget ${URL} && \
+  wget ${URL}.sha256.txt && \
+  shasum -a 256 xtrabackup-*.sha256.txt && \
+  tar -C /usr/local -xzf xtrabackup-*-arm64.tar.gz && \
+  rm -f xtrabackup-* ; \
 fi
 
 RUN xtrabackup --version
