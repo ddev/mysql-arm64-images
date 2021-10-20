@@ -11,8 +11,7 @@ This repo is used for publishing those images.
 * In the proper directory, use `push.sh` to push or `build.sh` to test a build.
 * When a new minor version of mysql is released, update the proper base_version.txt
 * Note that mysql 8.0 should only be updated to a new minor version *after* the xtrabackup-8.0 version that supports it (that has the same or higher major version)
-* So before updating mysql 8.0, change the 8.0/xtrabackup_version.sh to a matching tag and get a new one built.
+* xtrabackup-8.0 is built for arm64 in [xtrabackup-build](https://github.com/drud/xtrabackup-build), so you'll need a new release there if a new release for mysql 8.0 comes out, because xtrabackup-8.0 always has to be at least the version of mysql 8.0
+* So before updating mysql 8.0, change `files/install/mysql-server`, `files/install/percona-xtrabackup80`, `mysql_version.txt`, and `xtrabackup_version.txt` to the correct versions.
+* Then create a new release. The proper tags will be pushed for drud/mysql:5.7 and drud/mysql:8.0
 
-[comment]: <> (## Building xtrabackup-8.0)
-
-[comment]: <> (The build script for xtrabackup-8.0 was patterned on [Compiling Percona Xtrabackup for ARM]&#40;https://www.percona.com/blog/2021/04/28/compiling-percona-xtrabackup-for-arm/&#41; &#40;Thanks!&#41; and is intended for use on an arm64 Ubuntu 20.04 machine. You can just run the `build.sh` to build it, after choosing the version you want in `xtrabackup-8.0/base_version.txt`.)
