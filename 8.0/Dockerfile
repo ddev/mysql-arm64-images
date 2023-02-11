@@ -2,13 +2,16 @@ FROM ubuntu:20.04 as base
 ARG XTRABACKUP_PACKAGE_VERSION
 ARG MYSQL_PACKAGE_VERSION
 SHELL ["/bin/bash", "-c"]
+ENV MYSQL_DEB_TARBALL="https://www.dropbox.com/s/lvtjl6f3yuxz657/ubuntu-mysql-8.0.31.tgz?dl=0"
 
 # Pin the versions of mysql-server and percona-xtrabackup80 to the versions
 # in /files (which must be updated)
 COPY /files/mysql-server /etc/apt/preferences.d
 COPY /files/percona-xtrabackup80 /etc/apt/preferences.d
 
-RUN apt-get -qq update >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev libev-dev libdbd-mysql-perl lsb-release mysql-server rsync wget >/dev/null
+RUN apt-get -qq update >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev libev-dev libdbd-mysql-perl lsb-release rsync wget >/dev/null
+
+RUN curl -sLf -o /tmp/ubuntu-mysql.tgz  ${MYSQL_DEB_TARBALL} && cd /tmp && tar --strip-components=1 -zxf ubuntu-mysql.tgz && apt install -y ./archives-arm64/*.deb
 
 # If xtrabackup has been built into this repo, copy it in
 # But that will be arm64, so we'll delete it if we're on amd64

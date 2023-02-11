@@ -5,6 +5,12 @@ Oracle does not publish any arm64 images for mysql, but people on mac M1 ([ddev]
 
 This repo is used for publishing those images.
 
+## Preparation
+
+Because mysql-server-8.0 is usually ahead of the released xtrabackup version, it's important to capture the mysql-server and mysql-client deb files ahead of time, when we're expecting a new xtrabackup version.
+
+To do this, `docker run -it --rm ubuntu:20.04 bash` and `apt update && apt upgrade -y && apt install -y mysql-server` and then remove all that with `apt remove mysql-server mysql-client && apt autoremove`. This should put the system in position where the exact needed items will be downloaded with `apt install -y --download-only mysql-server-8.0`, after which all the need .deb files will be in /var/cache/apt/archives and they can be packaged for a new tarball.
+
 ## Building and pushing
 
 * Push both with ./push.sh in the top-level directory or
