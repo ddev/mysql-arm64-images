@@ -4,18 +4,20 @@ ARG MYSQL_PACKAGE_VERSION
 ARG TARGETPLATFORM
 SHELL ["/bin/bash", "-c"]
 ENV MYSQL_DEB_TARBALL="https://www.dropbox.com/s/lvtjl6f3yuxz657/ubuntu-mysql-8.0.31.tgz?dl=0"
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Pin the versions of mysql-server and percona-xtrabackup80 to the versions
 # in /files (which must be updated)
 COPY /files/mysql-server /etc/apt/preferences.d
 COPY /files/percona-xtrabackup80 /etc/apt/preferences.d
 
-RUN apt-get -qq update >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev  >/dev/null
+RUN apt-get -qq update >/dev/null && apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev  >/dev/null
 
+RUN apt install -y mysql-server || apt-get install -y mysql-server --fix-missing --fix-broken
 RUN curl -sLf -o /tmp/ubuntu-mysql.tgz  ${MYSQL_DEB_TARBALL} && cd /tmp && tar --strip-components=1 -zxf ubuntu-mysql.tgz
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades -o Dpkg::Options::="--force-confnew" --no-install-recommends --no-install-suggests /tmp/archives-${TARGETPLATFORM#linux/}/*.deb
+RUN apt-get install -y --allow-downgrades -o Dpkg::Options::="--force-confnew" --no-install-recommends --no-install-suggests /tmp/archives-${TARGETPLATFORM#linux/}/*.deb
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get -qq install -y -o Dpkg::Options::="--force-confold" rsync wget  >/dev/null
+RUN apt-get -qq install -y -o Dpkg::Options::="--force-confold" libdbd-mysql-perl libev4 rsync wget  >/dev/null
 
 # If xtrabackup has been built into this repo, copy it in
 # But that will be arm64, so we'll delete it if we're on amd64
@@ -26,10 +28,11 @@ SHELL ["/bin/bash", "-c"]
 
 # xtrabackup-8.0 should always be installed, then ddev-dbserver won't have to install it.
 # If on amd64 we'll get it from percona package
+# https://downloads.percona.com/downloads/Percona-XtraBackup-8.0/Percona-XtraBackup-8.0.31-24/binary/debian/buster/x86_64/percona-xtrabackup-80_8.0.31-24-1.buster_amd64.deb
 RUN if [ "$(arch)" = "x86_64" ]; then \
   set -eu -o pipefail; \
   rm -f /usr/local/bin/xb* /usr/local/bin/xtrabackup* /usr/local/lib/libmysqlservices.a ; \
-  curl --fail -o /tmp/xtrabackup.deb https://downloads.percona.com/downloads/Percona-XtraBackup-LATEST/Percona-XtraBackup-${XTRABACKUP_PACKAGE_VERSION%-*}/binary/debian/focal/x86_64/percona-xtrabackup-80_${XTRABACKUP_PACKAGE_VERSION}.focal_amd64.deb  && \
+  curl --fail -o /tmp/xtrabackup.deb https://downloads.percona.com/downloads/Percona-XtraBackup-8.0/Percona-XtraBackup-${XTRABACKUP_PACKAGE_VERSION%-*}/binary/debian/focal/x86_64/percona-xtrabackup-80_${XTRABACKUP_PACKAGE_VERSION}.focal_amd64.deb  && \
   dpkg -i /tmp/xtrabackup.deb >/dev/null && \
   rm /tmp/xtrabackup.deb ; \
   fi
