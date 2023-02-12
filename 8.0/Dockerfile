@@ -3,7 +3,6 @@ ARG XTRABACKUP_PACKAGE_VERSION
 ARG MYSQL_PACKAGE_VERSION
 ARG TARGETPLATFORM
 SHELL ["/bin/bash", "-c"]
-ENV MYSQL_DEB_TARBALL="https://www.dropbox.com/s/lvtjl6f3yuxz657/ubuntu-mysql-8.0.31.tgz?dl=0"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Pin the versions of mysql-server and percona-xtrabackup80 to the versions
@@ -14,11 +13,12 @@ COPY /files/percona-xtrabackup80 /etc/apt/preferences.d
 RUN apt-get -qq update >/dev/null && apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev  >/dev/null
 
 RUN apt install -y mysql-server || apt-get install -y mysql-server --fix-missing --fix-broken
-RUN curl -sLf -o /tmp/ubuntu-mysql.tgz  ${MYSQL_DEB_TARBALL} && cd /tmp && tar --strip-components=1 -zxf ubuntu-mysql.tgz
+COPY mysql-8.0.31/archives* /tmp
 RUN apt-get install -y --allow-downgrades -o Dpkg::Options::="--force-confnew" --no-install-recommends --no-install-suggests /tmp/archives-${TARGETPLATFORM#linux/}/*.deb
 
 RUN apt-get -qq install -y -o Dpkg::Options::="--force-confold" libdbd-mysql-perl libev4 rsync wget  >/dev/null
 
+RUN rm -rf /tmp/archives*
 # If xtrabackup has been built into this repo, copy it in
 # But that will be arm64, so we'll delete it if we're on amd64
 COPY /files/install/lib* /usr/local
