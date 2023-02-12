@@ -13,7 +13,9 @@ COPY /files/percona-xtrabackup80 /etc/apt/preferences.d
 RUN apt-get -qq update >/dev/null && apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev  >/dev/null
 
 RUN apt install -y mysql-server || apt-get install -y mysql-server --fix-missing --fix-broken
-COPY mysql-8.0.31/archives* /tmp
+COPY /mysql-8.0.31/archives-${TARGETPLATFORM#linux/} /tmp
+RUN ls -lR /tmp
+
 RUN apt-get install -y --allow-downgrades -o Dpkg::Options::="--force-confnew" --no-install-recommends --no-install-suggests /tmp/archives-${TARGETPLATFORM#linux/}/*.deb
 
 RUN apt-get -qq install -y -o Dpkg::Options::="--force-confold" libdbd-mysql-perl libev4 rsync wget  >/dev/null
