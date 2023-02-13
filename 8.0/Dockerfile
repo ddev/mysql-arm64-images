@@ -4,6 +4,7 @@ ARG MYSQL_PACKAGE_VERSION
 ARG TARGETPLATFORM
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
+SHELL ["/bin/bash", "-c"]
 
 # Pin the versions of mysql-server and percona-xtrabackup80 to the versions
 # in /files (which must be updated)
@@ -13,7 +14,7 @@ COPY /files/percona-xtrabackup80 /etc/apt/preferences.d
 RUN apt-get -qq update >/dev/null && apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev  >/dev/null
 
 RUN apt install -y mysql-server || apt-get install -y mysql-server --fix-missing --fix-broken
-COPY /mysql-8.0.31/archives-${TARGETPLATFORM#linux/} /tmp
+ADD /mysql-8.0.31 /tmp
 RUN ls -lR /tmp
 
 RUN apt-get install -y --allow-downgrades -o Dpkg::Options::="--force-confnew" --no-install-recommends --no-install-suggests /tmp/archives-${TARGETPLATFORM#linux/}/*.deb
@@ -21,12 +22,11 @@ RUN apt-get install -y --allow-downgrades -o Dpkg::Options::="--force-confnew" -
 RUN apt-get -qq install -y -o Dpkg::Options::="--force-confold" libdbd-mysql-perl libev4 rsync wget  >/dev/null
 
 RUN rm -rf /tmp/archives*
+
 # If xtrabackup has been built into this repo, copy it in
 # But that will be arm64, so we'll delete it if we're on amd64
 COPY /files/install/lib* /usr/local
 COPY /files/install/bin* /usr/local
-
-SHELL ["/bin/bash", "-c"]
 
 # xtrabackup-8.0 should always be installed, then ddev-dbserver won't have to install it.
 # If on amd64 we'll get it from percona package
