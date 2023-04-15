@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu -o pipefail
 
-REPO_NAME=drud/mysql
+REPO_NAME=ddev/mysql
 MYSQL_PACKAGE_VERSION=$(cat mysql_version.txt)
 MYSQL_MINOR=${MYSQL_PACKAGE_VERSION%%-*}
 MYSQL_MAJOR=${MYSQL_MINOR%.*}

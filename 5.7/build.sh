@@ -2,7 +2,7 @@
 
 set -eu -o pipefail
 
-MINORVERSION=${BASE:-drud/mysql:$(cat base_version.txt)}
+MINORVERSION=${BASE:-ddev/mysql:$(cat base_version.txt)}
 MAJORVERSION=${MINORVERSION%.*}
 
 set -x
