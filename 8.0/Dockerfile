@@ -41,7 +41,7 @@ RUN if [ "$(arch)" = "x86_64" ]; then \
 
 # But if we still don't have it (arm64)
 RUN if ! command -v xtrabackup; then \
-  URL="https://github.com/drud/xtrabackup-build/releases/download/${XTRABACKUP_PACKAGE_VERSION%-*}/xtrabackup-${XTRABACKUP_PACKAGE_VERSION%-*}-arm64.tar.gz" && \
+  URL="https://github.com/ddev/xtrabackup-build/releases/download/${XTRABACKUP_PACKAGE_VERSION%-*}/xtrabackup-${XTRABACKUP_PACKAGE_VERSION%-*}-arm64.tar.gz" && \
   cd /tmp && \
   wget ${URL} && \
   wget ${URL}.sha256.txt && \
