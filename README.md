@@ -1,7 +1,7 @@
 # mysql-arm64-images
 Build tools for mysql arm64 images
 
-Oracle does not publish any arm64 images for mysql, but people on mac M1 ([ddev](github.com/ddev/ddev)) certainly need native images. 
+Oracle does not publish any arm64 images for mysql, but people on Apple Silicon ([ddev](github.com/ddev/ddev)) certainly need native images. 
 
 This repo is used for publishing those images.
 
@@ -9,7 +9,7 @@ This repo is used for publishing those images.
 
 Because mysql-server-8.0 is usually ahead of the released xtrabackup version, it's important to capture the mysql-server and mysql-client deb files ahead of time, when we're expecting a new xtrabackup version.
 
-To do this, for both PLATFORM=linux/amd64 and PLATFORM=linux/arm64, `docker run -it --platform=$PLATFORM --rm ubuntu:20.04 bash` and `apt update && apt upgrade -y && apt install -y mysql-server` and then remove all that with `apt remove mysql-server mysql-client && apt autoremove`. This should put the system in position where the exact needed items will be downloaded with `apt install -y --download-only mysql-server-8.0`, after which all the need .deb files will be in /var/cache/apt/archives and they can be updated into the replacement of mysql-8.0.31
+To do this, for both PLATFORM=linux/amd64 and PLATFORM=linux/arm64, `docker run -it --platform=$PLATFORM --rm ubuntu:20.04 bash` and `apt update && apt upgrade -y && apt install -y mysql-server` and then remove all that with `apt remove mysql-server mysql-client && apt autoremove`. This should put the system in position where the exact needed items will be downloaded with `apt install -y --download-only mysql-server-8.0`, after which all the need .deb files will be in /var/cache/apt/archives and they can be updated into the replacement of mysql-8.0.33.
 
 ## Building and pushing
 
