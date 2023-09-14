@@ -11,7 +11,7 @@ SHELL ["/bin/bash", "-c"]
 COPY /files/mysql-server /etc/apt/preferences.d
 COPY /files/percona-xtrabackup80 /etc/apt/preferences.d
 
-RUN apt-get -qq update >/dev/null && apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev  >/dev/null
+RUN apt-get -qq update >/dev/null && apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev libssl-dev zstd  >/dev/null
 
 RUN apt install -y mysql-server >/dev/null || apt-get install -y mysql-server --fix-missing --fix-broken >/dev/null
 ADD /mysql-8.0.33 /tmp
@@ -34,7 +34,7 @@ COPY /files/install/bin* /usr/local
 RUN if [ "$(arch)" = "x86_64" ]; then \
   set -eu -o pipefail; \
   rm -f /usr/local/bin/xb* /usr/local/bin/xtrabackup* /usr/local/lib/libmysqlservices.a ; \
-  curl -s -L --fail -o /tmp/xtrabackup.deb https://downloads.percona.com/downloads/Percona-XtraBackup-8.0/Percona-XtraBackup-${XTRABACKUP_PACKAGE_VERSION%-*}/binary/debian/focal/x86_64/percona-xtrabackup-80_${XTRABACKUP_PACKAGE_VERSION}.focal_amd64.deb  && \
+  set -x && curl -s -L --fail -o /tmp/xtrabackup.deb https://downloads.percona.com/downloads/Percona-XtraBackup-8.0/Percona-XtraBackup-${XTRABACKUP_PACKAGE_VERSION%-*}/binary/debian/focal/x86_64/percona-xtrabackup-80_${XTRABACKUP_PACKAGE_VERSION}.focal_amd64.deb  && \
   dpkg -i /tmp/xtrabackup.deb >/dev/null && \
   rm /tmp/xtrabackup.deb ; \
   fi
