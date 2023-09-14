@@ -14,12 +14,12 @@ COPY /files/percona-xtrabackup80 /etc/apt/preferences.d
 RUN apt-get -qq update >/dev/null && apt-get -qq install -y -o Dpkg::Options::="--force-confold" curl libcurl4-openssl-dev libssl-dev zstd  >/dev/null
 
 RUN apt install -y mysql-server >/dev/null || apt-get install -y mysql-server --fix-missing --fix-broken >/dev/null
-ADD /mysql-8.0.33 /tmp
-RUN ls -lR /tmp
+# ADD /mysql-8.0.33 /tmp
+# RUN ls -lR /tmp
 
-RUN apt-get install -y --allow-downgrades -o Dpkg::Options::="--force-confnew" --no-install-recommends --no-install-suggests /tmp/archives-${TARGETPLATFORM#linux/}/*.deb >/dev/null
+# RUN apt-get install -y --allow-downgrades -o Dpkg::Options::="--force-confnew" --no-install-recommends --no-install-suggests /tmp/archives-${TARGETPLATFORM#linux/}/*.deb >/dev/null
 
-RUN apt-get -qq install -y -o Dpkg::Options::="--force-confold" libdbd-mysql-perl libev4 rsync wget  >/dev/null
+RUN apt-get -qq install -y -o Dpkg::Options::="--force-confold" libdbd-mysql-perl libev4 libssl-dev rsync wget  >/dev/null
 
 RUN rm -rf /tmp/archives*
 
@@ -50,7 +50,8 @@ RUN if ! command -v xtrabackup; then \
   rm -f xtrabackup-* ; \
 fi
 
-RUN xtrabackup --version
+# xtrabackup --version crashes here complaining about libssl, but works in pushed version
+# RUN xtrabackup --version
 
 FROM scratch as mysql
 COPY --from=base / /
