@@ -30,11 +30,12 @@ COPY /files/install/bin* /usr/local
 
 # xtrabackup-8.0 should always be installed, then ddev-dbserver won't have to install it.
 # If on amd64 we'll get it from percona package
-# https://downloads.percona.com/downloads/Percona-XtraBackup-8.0/Percona-XtraBackup-8.0.31-24/binary/debian/buster/x86_64/percona-xtrabackup-80_8.0.31-24-1.buster_amd64.deb
+# https://downloads.percona.com/downloads/Percona-XtraBackup-8.0/Percona-XtraBackup-8.0.35-30/binary/debian/jammy/x86_64/percona-xtrabackup-80_8.0.35-30-1.jammy_amd64.deb
+
 RUN if [ "$(arch)" = "x86_64" ]; then \
   set -eu -o pipefail; \
   rm -f /usr/local/bin/xb* /usr/local/bin/xtrabackup* /usr/local/lib/libmysqlservices.a ; \
-  set -x && curl -s -L --fail -o /tmp/xtrabackup.deb https://downloads.percona.com/downloads/Percona-XtraBackup-8.0/Percona-XtraBackup-${XTRABACKUP_PACKAGE_VERSION%-*}/binary/debian/focal/x86_64/percona-xtrabackup-80_${XTRABACKUP_PACKAGE_VERSION}.focal_amd64.deb  && \
+  set -x && curl -s -L --fail -o /tmp/xtrabackup.deb https://downloads.percona.com/downloads/Percona-XtraBackup-8.0/Percona-XtraBackup-${XTRABACKUP_PACKAGE_VERSION%-*}/binary/debian/jammy/x86_64/percona-xtrabackup-80_${XTRABACKUP_PACKAGE_VERSION}.jammy_amd64.deb  && \
   dpkg -i /tmp/xtrabackup.deb >/dev/null && \
   rm /tmp/xtrabackup.deb ; \
   fi
