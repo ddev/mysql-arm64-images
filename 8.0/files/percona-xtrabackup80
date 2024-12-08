@@ -1,3 +1,0 @@
-Package: percona-xtrabackup80
-Pin: version 8.0.28
-Pin-Priority: 999
