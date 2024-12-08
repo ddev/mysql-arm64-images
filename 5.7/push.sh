@@ -6,5 +6,5 @@ MAJORVERSION=${MINORVERSION%.*}
 
 echo "Pushing mysql:$MINORVERSION"
 set -x
-# Build only current architecture and load into docker
+docker buildx use multi-arch-builder || docker buildx create --name multi-arch-builder --use
 docker buildx build --target=mysql -t ${MINORVERSION} -t ${MAJORVERSION}  --push --platform=linux/arm64,linux/amd64 .
